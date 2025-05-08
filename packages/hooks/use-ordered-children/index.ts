@@ -25,10 +25,9 @@ export const useOrderedChildren = <T extends { uid: number }>(
   const children: Record<number, T> = {}
   const orderedChildren = shallowRef<T[]>([])
 
-  // TODO: split into two functions: addChild and sortChildren
   const addChild = (child: T) => {
     children[child.uid] = child
-    orderedChildren.value = getOrderedChildren(vm, childComponentName, children)
+    orderedChildren.value = [...orderedChildren.value, child]
   }
   const removeChild = (uid: number) => {
     delete children[uid]
@@ -36,10 +35,19 @@ export const useOrderedChildren = <T extends { uid: number }>(
       (children) => children.uid !== uid
     )
   }
+  const sortChildren = () => {
+    const currentChildren = orderedChildren.value
+    const updatedChildren = getOrderedChildren(vm, childComponentName, children)
+    const shouldUpdate = updatedChildren.some(
+      (child, index) => child.uid !== currentChildren[index].uid
+    )
+    if (shouldUpdate) orderedChildren.value = updatedChildren
+  }
 
   return {
     children: orderedChildren,
     addChild,
     removeChild,
+    sortChildren,
   }
 }

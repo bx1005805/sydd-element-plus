@@ -48,27 +48,29 @@
       <PlaceholderItem />
       <slot />
     </div>
-    <ul v-if="indicatorPosition !== 'none'" :class="indicatorsClasses">
-      <li
-        v-for="(item, index) in items"
-        v-show="isTwoLengthShow(index)"
-        :key="index"
-        :class="[
-          ns.e('indicator'),
-          ns.em('indicator', direction),
-          ns.is('active', index === activeIndex),
-        ]"
-        @mouseenter="throttledIndicatorHover(index)"
-        @click.stop="handleIndicatorClick(index)"
-      >
-        <button
-          :class="ns.e('button')"
-          :aria-label="t('el.carousel.indicator', { index: index + 1 })"
+    <indicators-renderer @vue:before-update="sortItems">
+      <ul v-if="indicatorPosition !== 'none'" :class="indicatorsClasses">
+        <li
+          v-for="(item, index) in items"
+          v-show="isTwoLengthShow(index)"
+          :key="index"
+          :class="[
+            ns.e('indicator'),
+            ns.em('indicator', direction),
+            ns.is('active', index === activeIndex),
+          ]"
+          @mouseenter="throttledIndicatorHover(index)"
+          @click.stop="handleIndicatorClick(index)"
         >
-          <span v-if="hasLabel">{{ item.props.label }}</span>
-        </button>
-      </li>
-    </ul>
+          <button
+            :class="ns.e('button')"
+            :aria-label="t('el.carousel.indicator', { index: index + 1 })"
+          >
+            <span v-if="hasLabel">{{ item.props.label }}</span>
+          </button>
+        </li>
+      </ul>
+    </indicators-renderer>
     <svg
       v-if="props.motionBlur"
       xmlns="http://www.w3.org/2000/svg"
@@ -95,6 +97,8 @@ import { useLocale, useNamespace } from '@element-plus/hooks'
 import { carouselEmits, carouselProps } from './carousel'
 import { useCarousel } from './use-carousel'
 
+import type { Slots } from 'vue'
+
 const COMPONENT_NAME = 'ElCarousel'
 defineOptions({
   name: COMPONENT_NAME,
@@ -110,6 +114,7 @@ const {
   hover,
   isCardType,
   items,
+  sortItems,
   isVertical,
   containerStyle,
   handleButtonEnter,
@@ -164,6 +169,10 @@ const indicatorsClasses = computed(() => {
   }
   return classes
 })
+
+const indicatorsRenderer = (_: object, { slots }: { slots: Slots }) => {
+  return slots.default!()
+}
 
 defineExpose({
   /** @description active slide index */

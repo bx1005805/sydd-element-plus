@@ -1,8 +1,8 @@
 import {
   getCurrentInstance,
   inject,
-  onMounted,
-  onUnmounted,
+  onBeforeMount,
+  onBeforeUnmount,
   reactive,
   ref,
   unref,
@@ -134,7 +134,7 @@ export const useCarouselItem = (props: CarouselItemProps) => {
   }
 
   // lifecycle
-  onMounted(() => {
+  onBeforeMount(() => {
     carouselContext.addItem({
       props,
       states: reactive({
@@ -151,7 +151,7 @@ export const useCarouselItem = (props: CarouselItemProps) => {
     })
   })
 
-  onUnmounted(() => {
+  onBeforeUnmount(() => {
     carouselContext.removeItem(instance.uid)
   })
 
