@@ -346,8 +346,11 @@ export default defineComponent({
       })
     )
 
-    watch([config, () => props.options], initStore, {
+    watch(() => props.options, initStore, {
       deep: true,
+    })
+
+    watch(() => JSON.stringify(config.value), initStore, {
       immediate: true,
     })
 
