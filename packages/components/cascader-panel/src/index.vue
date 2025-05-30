@@ -346,13 +346,17 @@ export default defineComponent({
       })
     )
 
-    watch(() => props.options, initStore, {
-      deep: true,
-    })
-
-    watch(() => JSON.stringify(config.value), initStore, {
-      immediate: true,
-    })
+    watch(
+      [config, () => props.options],
+      (newVal, oldVal) => {
+        if (isEqual(newVal, oldVal)) return
+        initStore()
+      },
+      {
+        deep: true,
+        immediate: true,
+      }
+    )
 
     watch(
       () => props.modelValue,
