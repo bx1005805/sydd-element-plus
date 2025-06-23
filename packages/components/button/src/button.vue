@@ -1,3 +1,4 @@
+<!-- 2026/6/23   开始！ -->
 <template>
   <component
     :is="tag"
